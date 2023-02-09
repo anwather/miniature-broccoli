@@ -71,12 +71,6 @@ param parAutomationAccountTags object = parTags
 @sys.description('Tags you would like to be applied to Log Analytics Workspace.')
 param parLogAnalyticsWorkspaceTags object = parTags
 
-@sys.description('Set Parameter to true to Opt-out of deployment telemetry')
-param parTelemetryOptOut bool = false
-
-// Customer Usage Attribution Id
-var varCuaid = 'f8087c67-cc41-46b2-994d-66e4b661860d'
-
 resource resAutomationAccount 'Microsoft.Automation/automationAccounts@2021-06-22' = {
   name: parAutomationAccountName
   location: parAutomationAccountLocation
@@ -126,13 +120,6 @@ resource resLogAnalyticsLinkedServiceForAutomationAccount 'Microsoft.Operational
   properties: {
     resourceId: resAutomationAccount.id
   }
-}
-
-// Optional Deployment for Customer Usage Attribution
-module modCustomerUsageAttribution '../../CRML/customerUsageAttribution/cuaIdResourceGroup.bicep' = if (!parTelemetryOptOut) {
-  #disable-next-line no-loc-expr-outside-params //Only to ensure telemetry data is stored in same location as deployment. See https://github.com/Azure/ALZ-Bicep/wiki/FAQ#why-are-some-linter-rules-disabled-via-the-disable-next-line-bicep-function for more information
-  name: 'pid-${varCuaid}-${uniqueString(resourceGroup().location)}'
-  params: {}
 }
 
 output outLogAnalyticsWorkspaceName string = resLogAnalyticsWorkspace.name
