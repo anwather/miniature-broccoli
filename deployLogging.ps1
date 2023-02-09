@@ -1,9 +1,3 @@
-$resourceGroupName = "logging"
-$defaultLocation = "australiaeast"
+$timeNow = Get-Date -Format FileDateTime
 
-New-AzResourceGroup -Name $resourceGroupName -Location $defaultLocation -Verbose -Force
-
-New-AzResourceGroupDeployment -ResourceGroupName $resourceGroupName `
-    -TemplateFile .\logging\logging.bicep `
-    -TemplateParameterFile .\logging.parameters.all.json `
-    -Verbose
+New-AzDeployment -Name "logging-$timeNow" -Location australiaeast -TemplateFile .\logging.bicep -Verbose
